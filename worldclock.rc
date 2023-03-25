@@ -1,25 +1,11 @@
 // Microsoft Visual C++ generated resource script.
 //
-#include "resource."
+#include "resource.h"
 
-#define APSTUDIO_READONLY_SYMBOLS
-/////////////////////////////////////////////////////////////////////////////
-//
-// Generated from the TEXTINCLUDE 2 resource.
-//
-#include "afxres.h"
+
 
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
-
-/////////////////////////////////////////////////////////////////////////////
-// English (U.S.) resources
-
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-#ifdef _WIN32
-LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
-#pragma code_page(1252)
-#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -27,27 +13,27 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 //
 
 SETUPDIALOG DIALOG  6, 15, 189, 107
-STYLE DS_SETFONT | DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
+//STYLE DS_SETFONT | DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
 CAPTION "Clock Setup"
 FONT 8, "MS Sans Serif"
 BEGIN
     LTEXT           "Name",-1,26,21,20,8
     EDITTEXT        TIMEZONE_NAME,53,19,113,12
     LTEXT           "GMT Offset",-1,10,45,40,8
-    SCROLLBAR       GMT_OFFSET_SLIDER,53,43,113,12,WS_TABSTOP
+    SCROLLBAR       GMT_OFFSET_SLIDER,53,43,113,12 //,WS_TABSTOP
     CTEXT           "",GMT_OFFSET_TEXT,99,56,21,10
-    DEFPUSHBUTTON   "OK",IDOK,35,77,37,18,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,35,77,37,18//,WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,116,77,37,18
 END
 
 ABOUTBOX DIALOGEX 6, 65530, 173, 87
-STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+//STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "About World Clock"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,69,60,37,18,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,69,60,37,18//,WS_GROUP
     ICON            "WorldClock",-1,6,14,20,20
-    CTEXT           "World Clock (Win32)\nA Multi-Timezone Clock\nVersion 1.12 -- July 31, 2016\nCopyright © 1995, 1997, 2013, 2016 \nJeff Otterson\notterson@yahoo.com",-1,34,3,118,51
+    CTEXT           "World Clock (Win32)\nA Multi-Timezone Clock\nVersion 1.13 -- March 25, 2023\nCopyright © 1995\nJeff Otterson\notterson@yahoo.com",-1,34,3,118,51
 END
 
 
@@ -85,12 +71,12 @@ BEGIN
             VALUE "Comments", "by Jeff Otterson"
             VALUE "CompanyName", "Jeff Otterson"
             VALUE "FileDescription", "WorldClock: Multi-timezone digital clock"
-            VALUE "FileVersion", "1.10"
+            VALUE "FileVersion", "1.13"
             VALUE "InternalName", "WorldClock"
-            VALUE "LegalCopyright", "Copyright © Jeff Otterson, 1995, 1997, 2013"
+            VALUE "LegalCopyright", "Copyright © Jeff Otterson, 1995"
             VALUE "OriginalFilename", " WorldClock.exe"
             VALUE "ProductName", "WorldClock"
-            VALUE "ProductVersion", "1.10"
+            VALUE "ProductVersion", "1.13"
         END
     END
     BLOCK "VarFileInfo"
@@ -98,42 +84,4 @@ BEGIN
         VALUE "Translation", 0x409, 1252
     END
 END
-
-
-#ifdef APSTUDIO_INVOKED
-/////////////////////////////////////////////////////////////////////////////
-//
-// TEXTINCLUDE
-//
-
-1 TEXTINCLUDE 
-BEGIN
-    "resource.\0"
-END
-
-3 TEXTINCLUDE 
-BEGIN
-    "\r\0"
-END
-
-2 TEXTINCLUDE 
-BEGIN
-    "#include ""afxres.h""\r\0"
-END
-
-#endif    // APSTUDIO_INVOKED
-
-#endif    // English (U.S.) resources
-/////////////////////////////////////////////////////////////////////////////
-
-
-
-#ifndef APSTUDIO_INVOKED
-/////////////////////////////////////////////////////////////////////////////
-//
-// Generated from the TEXTINCLUDE 3 resource.
-//
-
-/////////////////////////////////////////////////////////////////////////////
-#endif    // not APSTUDIO_INVOKED
 

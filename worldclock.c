@@ -4,6 +4,8 @@
 /* Jeff Otterson  27 April 1995      version 1.00  original version           */
 /* Jeff Otterson  18 October 1995    version 1.01  remove bwcc                */
 /* Jeff Otterson  15 December 1995   version 1.02  fix add clock cancel bug   */
+/* Jeff Otterson  31 July 2016       version 1.12  seconds                    */
+/* Jeff Otterson  15 December 2023   version 1.13  always clear on invalidate */
 /******************************************************************************/
 
 #define WIN32_LEAN_AND_MEAN
@@ -14,7 +16,8 @@
 #include "wclock.h"
 
 #define TIMER_ID 101
-#define INI_FILE_NAME "WorldClock.ini"
+#define TIMER_ID 101
+#define INI_FILE_NAME "./WorldClock.ini"
 
 ClockInfoListStruct *clockInfoList = NULL;
 static HINSTANCE hInstance;
@@ -31,7 +34,7 @@ LRESULT WINAPI ModifyDialogProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 LRESULT WINAPI AboutBoxDialogProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 LRESULT WndProc (HWND, UINT, WPARAM, LPARAM);
 
-int PASCAL WinMain (HINSTANCE hInst, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCmdShow)
+int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCmdShow)
 {
     static char szAppName [] = "WorldClock" ;
     HWND        hwndTop ;
@@ -96,8 +99,7 @@ int PASCAL WinMain (HINSTANCE hInst, HINSTANCE hPrevInstance, LPSTR lpszCmdLine,
     return (int) msg.wParam ;
 } /* WinMain() */
 
-//LRESULT FAR PASCAL WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
-LRESULT WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     int i, gmtOffset;
     char data[CLOCK_NAME_SIZE], name[CLOCK_NAME_SIZE];
@@ -122,11 +124,11 @@ LRESULT WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             {
                 for (i = 1; i <= numClocks; i++)
                 {
-                    sprintf_s(name, CLOCK_NAME_SIZE, "Clock%dName",i);
+                    sprintf_s(name, CLOCK_NAME_SIZE, "Clock%dName", i);
                     GetPrivateProfileString("ClockData", name, "", data, CLOCK_NAME_SIZE, INI_FILE_NAME);
                     if (strlen(data) == 0)
                         break;
-                    sprintf_s(name, CLOCK_NAME_SIZE, "Clock%dOffset",i);
+                    sprintf_s(name, CLOCK_NAME_SIZE, "Clock%dOffset", i);
                     gmtOffset = GetPrivateProfileInt("ClockData", name, 24, INI_FILE_NAME);
                     AddClock(hwnd, layout, data, gmtOffset);
                 } /* for i */
@@ -150,7 +152,7 @@ LRESULT WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             clockInfoListPtr = clockInfoList;
             while (clockInfoListPtr != NULL)
             {
-                InvalidateRect(clockInfoListPtr->hwnd, NULL, FALSE);
+                InvalidateRect(clockInfoListPtr->hwnd, NULL, TRUE);
                 clockInfoListPtr = clockInfoListPtr->next;
             } /* while clockInfoListPtr != NULL */
             break;
@@ -268,7 +270,7 @@ LRESULT WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             break;
 
         case WM_DESTROY:
-            PostQuitMessage (0);
+            PostQuitMessage(0);
             return 0 ;
     }
     return DefWindowProc(hwnd, message, wParam, lParam) ;
@@ -277,47 +279,48 @@ LRESULT WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 HWND AddClock(HWND parentWindow, int layout, char *name, int gmtOffset)
 {
     ClockInfoListStruct *clockInfoListPtr = clockInfoList;
+    ClockInfoListStruct *newClockInfoListNode = wmalloc(sizeof(ClockInfoListStruct));
 
     if (clockInfoList == NULL)
     {
-        clockInfoListPtr = (ClockInfoListStruct *) wmalloc(sizeof(ClockInfoListStruct));
+        clockInfoListPtr = newClockInfoListNode;
         clockInfoList = clockInfoListPtr;
     } /* if clockInfoList == NULL */
     else
     {
         while (clockInfoListPtr->next != NULL)
             clockInfoListPtr = clockInfoListPtr->next;
-        clockInfoListPtr->next =(ClockInfoListStruct *) wmalloc(sizeof(ClockInfoListStruct));
+        clockInfoListPtr->next = newClockInfoListNode;
         clockInfoListPtr = clockInfoListPtr->next;
     } /* if clockInfoList == NULL */
     /* list entry is created, populate it */
     if (layout)
     {
-        clockInfoListPtr->hwnd = CreateWindow (CLOCK_CLASS_NAME,
-                                               name,
-                                               WS_CHILD | WS_VISIBLE | WS_BORDER,
-                                               0,
-                                               (numClocks-1) * CLOCK_DISPLAY_HEIGHT,
-                                               CLOCK_DISPLAY_WIDTH,
-                                               CLOCK_DISPLAY_HEIGHT,
-                                               parentWindow,
-                                               NULL,
-                                               hInstance,
-                                               NULL);
+        clockInfoListPtr->hwnd = CreateWindow(CLOCK_CLASS_NAME,
+                                              name,
+                                              WS_CHILD | WS_VISIBLE | WS_BORDER,
+                                              0,
+                                              (numClocks-1) * CLOCK_DISPLAY_HEIGHT,
+                                              CLOCK_DISPLAY_WIDTH,
+                                              CLOCK_DISPLAY_HEIGHT,
+                                              parentWindow,
+                                              NULL,
+                                              hInstance,
+                                              NULL);
     }
     else
     {
-        clockInfoListPtr->hwnd = CreateWindow (CLOCK_CLASS_NAME,
-                                               name,
-                                               WS_CHILD | WS_VISIBLE | WS_BORDER,
-                                               (numClocks-1) * CLOCK_DISPLAY_WIDTH,
-                                               0,
-                                               CLOCK_DISPLAY_WIDTH,
-                                               CLOCK_DISPLAY_HEIGHT,
-                                               parentWindow,
-                                               NULL,
-                                               hInstance,
-                                               NULL);
+        clockInfoListPtr->hwnd = CreateWindow(CLOCK_CLASS_NAME,
+                                              name,
+                                              WS_CHILD | WS_VISIBLE | WS_BORDER,
+                                              (numClocks-1) * CLOCK_DISPLAY_WIDTH,
+                                              0,
+                                              CLOCK_DISPLAY_WIDTH,
+                                              CLOCK_DISPLAY_HEIGHT,
+                                              parentWindow,
+                                              NULL,
+                                              hInstance,
+                                              NULL);
     }
     SendMessage(clockInfoListPtr->hwnd, CLOCK_PARAMS_MSG,
                 (WPARAM) gmtOffset,
@@ -340,7 +343,7 @@ int ModifyClock(HWND clockWindow)
     return (int) dbx;
 } /* ModifyClock() */
 
-LRESULT WINAPI ModifyDialogProc (HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT WINAPI ModifyDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     static ClockInfoStruct *clockInfo;
     static short gmtOffset;
@@ -443,7 +446,7 @@ LRESULT WINAPI ModifyDialogProc (HWND hDlg, UINT message, WPARAM wParam, LPARAM 
     return(FALSE);
 } /* ModifyDialogProc() */
 
-LRESULT WINAPI AboutBoxDialogProc (HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT WINAPI AboutBoxDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
